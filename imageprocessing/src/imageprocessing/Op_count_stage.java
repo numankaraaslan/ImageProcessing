@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -24,13 +25,13 @@ public class Op_count_stage extends Application
 {
     private ComboBox<Integer> combobox_op_count;
     private ImageProcessing main_window;
-    private Properties props;
     private EventHandler<ActionEvent> locale_tr_action;
     private EventHandler<ActionEvent> locale_en_action;
     @Override
     public void start( final Stage primaryStage ) throws Exception
     {
-        Font default_font = Font.font( "Arial", 18 );
+        check_screen_res();
+        Constants.default_font = Font.font( "Arial", 18 );
         main_window = new ImageProcessing();
         get_props( "TR" );
         primaryStage.setResizable( false );
@@ -44,12 +45,12 @@ public class Op_count_stage extends Application
             combobox_op_count.getItems().add( i + 1 );
         }
         combobox_op_count.getSelectionModel().selectFirst();
-        final Text txt_op_count = new Text( props.getProperty( "txt_op_count" ) );
+        final Text txt_op_count = new Text( Constants.props.getProperty( "txt_op_count" ) );
         vbox_op_count.setTranslateX( 10 );
         vbox_op_count.setTranslateY( 10 );
-        txt_op_count.setFont( default_font );
-        final Button btn_ok = new Button( props.getProperty( "btn_ok" ) );
-        btn_ok.setFont( default_font );
+        txt_op_count.setFont( Constants.default_font );
+        final Button btn_ok = new Button( Constants.props.getProperty( "btn_ok" ) );
+        btn_ok.setFont( Constants.default_font );
         btn_ok.setPrefWidth( 290 );
         btn_ok.setOnAction( new EventHandler<ActionEvent>()
         {
@@ -86,9 +87,9 @@ public class Op_count_stage extends Application
             public void handle( ActionEvent event )
             {
                 get_props( "TR" );
-                txt_op_count.setText( props.getProperty( "txt_op_count" ) );
-                btn_ok.setText( props.getProperty( "btn_ok" ) );
-                primaryStage.setTitle( props.getProperty( "op_count_stage.title" ) );
+                txt_op_count.setText( Constants.props.getProperty( "txt_op_count" ) );
+                btn_ok.setText( Constants.props.getProperty( "btn_ok" ) );
+                primaryStage.setTitle( Constants.props.getProperty( "op_count_stage.title" ) );
             }
         };
         locale_en_action = new EventHandler<ActionEvent>()
@@ -97,21 +98,21 @@ public class Op_count_stage extends Application
             public void handle( ActionEvent event )
             {
                 get_props( "EN" );
-                txt_op_count.setText( props.getProperty( "txt_op_count" ) );
-                btn_ok.setText( props.getProperty( "btn_ok" ) );
-                primaryStage.setTitle( props.getProperty( "op_count_stage.title" ) );
+                txt_op_count.setText( Constants.props.getProperty( "txt_op_count" ) );
+                btn_ok.setText( Constants.props.getProperty( "btn_ok" ) );
+                primaryStage.setTitle( Constants.props.getProperty( "op_count_stage.title" ) );
             }
         };
         locale_TR.setOnAction( locale_tr_action );
         locale_EN.setOnAction( locale_en_action );
-        locale_TR.setFont( default_font );
-        locale_EN.setFont( default_font );
+        locale_TR.setFont( Constants.default_font );
+        locale_EN.setFont( Constants.default_font );
         locale_TR.setToggleGroup( some_group );
         locale_EN.setToggleGroup( some_group );
         hbox_locale.getChildren().addAll( locale_TR, locale_EN );
         root.getChildren().addAll( hbox_locale, vbox_op_count );
         Scene scene = new Scene( root, 300, 170 );
-        primaryStage.setTitle( props.getProperty( "op_count_stage.title" ) );
+        primaryStage.setTitle( Constants.props.getProperty( "op_count_stage.title" ) );
         primaryStage.setScene( scene );
         primaryStage.setOnCloseRequest( primary_closing() );
         primaryStage.show();
@@ -131,16 +132,24 @@ public class Op_count_stage extends Application
 
     private void get_props( String locale )
     {
-        props = new Properties();
+        Constants.props = new Properties();
         try ( InputStream input = locale.equals( "TR" ) ? new FileInputStream( "src\\imageprocessing\\strings_tr_TR.properties" ) : new FileInputStream( "src\\imageprocessing\\strings_en_US.properties" ) )
         {
-            props.load( input );
+            Constants.props.load( input );
         }
         catch ( Exception ex )
         {
             System.out.println( ex.getMessage() );
         }
-        main_window.set_props( props );
-        Operation_types.set_all( props );
+        main_window.set_props( Constants.props );
+        Operation_types.set_all( Constants.props );
+    }
+
+    private void check_screen_res()
+    {
+        if ( Screen.getPrimary().getBounds().getWidth() < 1280 || Screen.getPrimary().getBounds().getHeight() < 720 )
+        {
+            Message_box.show( Constants.props.getProperty( "res_warning" ), Constants.props.getProperty( "warning" ), Message_box.warning_message );
+        }
     }
 }
