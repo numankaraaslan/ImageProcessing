@@ -10,6 +10,9 @@ import org.opencv.imgproc.Imgproc;
 
 public class Operator
 {
+    public static int processors;
+    public static Deteriorationthread[] threads;
+
     public static Mat do_operations( Mat currentFrame, Iterable<Operation> operations )
     {
         for ( Operation some_operation : operations )
@@ -163,7 +166,6 @@ public class Operator
 
     private static void thread_work( Mat currentFrame, int coef )
     {
-        int processors = ( int ) ( Runtime.getRuntime().availableProcessors() * ( 1.5 ) );
         int interval = ( currentFrame.height() / processors );
         if ( processors >= 8 )
         {
@@ -173,16 +175,18 @@ public class Operator
         {
             interval++;
         }
-        Deteriorationthread[] threads = new Deteriorationthread[ processors ];
         int end;
         for ( int i = 0; i < processors; i++ )
         {
             end = ( i + 1 ) * interval < currentFrame.height() ? ( i + 1 ) * interval : currentFrame.height();
             Deteriorationthread d_thread = new Deteriorationthread( coef, currentFrame.submat( i * interval, end, 0, currentFrame.width() ) );
             threads[i] = d_thread;
-            d_thread.start();
         }
         boolean done;
+        for ( Deteriorationthread d_thread : threads )
+        {
+            d_thread.start();
+        }
         do
         {
             done = true;

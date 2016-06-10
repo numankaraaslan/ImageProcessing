@@ -68,11 +68,17 @@ public class ImageProcessing
     private TextField textfield_height;
     private boolean load_from_file;
     private Text txt_X;
+    //most used
+    private Image final_image;
+    private MatOfByte mem;
+    private Mat currentFrame;
 
     public void start( final Stage primaryStage )
     {
         operations = new LinkedList<>();
         comboboxes = new LinkedList<>();
+        Operator.processors = ( int ) ( Runtime.getRuntime().availableProcessors() * 1.5 );
+        Operator.threads = new Deteriorationthread[ Operator.processors ];
         load_from_file = false;
         capture = new VideoCapture();
         desktop_path = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\";
@@ -562,8 +568,8 @@ public class ImageProcessing
 
     private Image grabFrame( boolean save_option )
     {
-        Image final_image = null;
-        Mat currentFrame = new Mat();
+        final_image = null;
+        currentFrame = new Mat();
         if ( capture.isOpened() )
         {
             capture.read( currentFrame );
@@ -574,7 +580,7 @@ public class ImageProcessing
                 {
                     Imgcodecs.imwrite( desktop_path + "Saved" + new Random().nextInt( 1000 ) + ".png", currentFrame );
                 }
-                MatOfByte mem = new MatOfByte();
+                mem = new MatOfByte();
                 imencode( ".bmp", currentFrame, mem );
                 final_image = new Image( new ByteArrayInputStream( mem.toArray() ) );
             }
@@ -656,7 +662,14 @@ public class ImageProcessing
             @Override
             public void handle( ActionEvent event )
             {
-                grabFrame( true );
+                if ( grabFrame( true ) != null )
+                {
+                    Message_box.show( Constants.props.getProperty( "msg_image_saved" ), "Info", Message_box.info_message );
+                }
+                else
+                {
+                    Message_box.show( Constants.props.getProperty( "msg_image_not_saved" ), "Info", Message_box.warning_message );
+                }
             }
         };
     }
