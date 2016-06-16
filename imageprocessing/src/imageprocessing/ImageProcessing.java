@@ -7,10 +7,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Properties;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
@@ -554,7 +554,7 @@ public class ImageProcessing
                 @Override
                 public void run()
                 {
-                    capture_view.set_frame( grabFrame( false ) );
+                    capture_view.set_frame( grabFrame() );
                 }
             };
             timer = new Timer();
@@ -566,20 +566,16 @@ public class ImageProcessing
         }
     }
 
-    private Image grabFrame( boolean save_option )
+    private Image grabFrame()
     {
         final_image = null;
-        currentFrame = new Mat();
+        Mat some_frame = new Mat();
         if ( capture.isOpened() )
         {
-            capture.read( currentFrame );
-            if ( !currentFrame.empty() )
+            capture.read( some_frame );
+            if ( !some_frame.empty() )
             {
-                currentFrame = Operator.do_operations( currentFrame, operations );
-                if ( save_option )
-                {
-                    Imgcodecs.imwrite( desktop_path + "Saved" + new Random().nextInt( 1000 ) + ".png", currentFrame );
-                }
+                currentFrame = Operator.do_operations( some_frame, operations );
                 mem = new MatOfByte();
                 imencode( ".bmp", currentFrame, mem );
                 final_image = new Image( new ByteArrayInputStream( mem.toArray() ) );
@@ -662,14 +658,9 @@ public class ImageProcessing
             @Override
             public void handle( ActionEvent event )
             {
-                if ( grabFrame( true ) != null )
-                {
-                    Message_box.show( Constants.props.getProperty( "msg_image_saved" ), "Info", Message_box.info_message );
-                }
-                else
-                {
-                    Message_box.show( Constants.props.getProperty( "msg_image_not_saved" ), "Info", Message_box.warning_message );
-                }
+                LocalDateTime now = java.time.LocalDateTime.now();
+                Imgcodecs.imwrite( desktop_path + "Saved " + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".bmp", currentFrame );
+                Message_box.show( Constants.props.getProperty( "msg_image_saved" ), "Info", Message_box.info_message );
             }
         };
     }
@@ -745,7 +736,8 @@ public class ImageProcessing
                         ops_info += Operation_types.op_change_RGB + ";" + some_operation.get_change_RGB_values()[0] + "," + some_operation.get_change_RGB_values()[1] + "," + some_operation.get_change_RGB_values()[2] + "\n";
                     }
                 }
-                try ( FileWriter file_writer = new FileWriter( desktop_path + "operations.cfg" ) )
+                LocalDateTime now = java.time.LocalDateTime.now();
+                try ( FileWriter file_writer = new FileWriter( desktop_path + "operations" + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".cfg" ) )
                 {
                     file_writer.write( ops_info );
                     Message_box.show( Constants.props.getProperty( "config.saved" ), "Info", Message_box.info_message );
