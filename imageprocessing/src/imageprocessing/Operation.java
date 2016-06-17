@@ -7,7 +7,7 @@ public class Operation
 {
     private final int operation_number;
     private String op_name;
-    private int crop_low, crop_high, set_R, set_G, set_B, brightnesss = 0, blur_size = 40, clahe_limit = 40, clahe_size = 8, deterioration = 40, change_R, change_G, change_B;
+    private int crop_low, crop_high, set_R, set_G, set_B, brightnesss = 0, blur_size = 40, clahe_limit = 40, clahe_size = 8, deterioration = 40, change_R, change_G, change_B, ghost_size = 50;
     private double contrast = 1.0;
     private LinkedList<Mat> ghost_mats;
     private double[][] convolution = new double[][]
@@ -55,7 +55,7 @@ public class Operation
 
     public void add_ghost_mat( Mat new_mat )
     {
-        if ( ghost_mats.size() > 9 )
+        if ( ghost_mats.size() >= ghost_size )
         {
             ghost_mats.removeFirst();
         }
