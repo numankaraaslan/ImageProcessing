@@ -7,7 +7,7 @@ public class Operation
 {
     private final int operation_number;
     private String op_name;
-    private int crop_low, crop_high, set_R, set_G, set_B, brightnesss = 0, blur_size = 40, clahe_limit = 40, clahe_size = 8, deterioration = 40, change_R, change_G, change_B, ghost_size = 50;
+    private int crop_low, crop_high, set_R, set_G, set_B, brightnesss = 0, blur_size = 40, clahe_limit = 40, clahe_size = 8, deterioration = 40, change_R, change_G, change_B, ghost_size = 10;
     private double contrast = 1.0;
     private LinkedList<Mat> ghost_mats;
     private double[][] convolution = new double[][]
@@ -40,7 +40,6 @@ public class Operation
     {
         this.operation_number = i;
         op_name = Operation_types.normal;
-        ghost_mats = new LinkedList<>();
     }
 
     public int get_operation_number()
@@ -53,6 +52,11 @@ public class Operation
         return ghost_mats;
     }
 
+    public void initialize_ghost_mats()
+    {
+        this.ghost_mats.clear();
+    }
+
     public void add_ghost_mat( Mat new_mat )
     {
         if ( ghost_mats.size() >= ghost_size )
@@ -60,6 +64,17 @@ public class Operation
             ghost_mats.removeFirst();
         }
         ghost_mats.add( new_mat );
+    }
+
+    public int get_ghost_size()
+    {
+        return ghost_size;
+    }
+
+    public void set_ghost_size( int ghost_size )
+    {
+        ghost_mats = new LinkedList<>();
+        this.ghost_size = ghost_size;
     }
 
     public void set_convolution( double[][] convolution )

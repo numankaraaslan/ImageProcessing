@@ -100,7 +100,7 @@ public class ImageProcessing
                 System.exit( 1 );
             }
         } );
-        primaryStage.setMinHeight( scene.getHeight() + 40 );
+        primaryStage.setMinHeight( scene.getHeight() + 45 );
         primaryStage.show();
     }
 
@@ -174,6 +174,7 @@ public class ImageProcessing
         Text txt_operation = new Text( Constants.props.getProperty( "txt_operation" ) + ( op_number + 1 ) );
         txt_operation.setFont( Constants.default_font );
         final ComboBox combobox_operations = new ComboBox();
+        final Button btn_apply = new Button( Constants.props.getProperty( "btn_apply" ) );
         combobox_operations.getItems().addAll( Operation_types.get_all() );
         combobox_operations.setStyle( "-fx-font-size : 14pt" );
         combobox_operations.setPrefWidth( 285 );
@@ -196,6 +197,7 @@ public class ImageProcessing
         final Text txt_clahe_clip_limit = new Text( Constants.props.getProperty( "txt_clahe_clip_limit" ) + ": 40" );
         txt_clahe_clip_limit.setFont( Constants.default_font );
         final Slider slider_clahe_limit = new Slider( 0, 100, 40 );
+        slider_clahe_limit.setPrefWidth( 280 );
         slider_clahe_limit.setStyle( "-fx-font-size : 14pt" );
         slider_clahe_limit.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -203,11 +205,13 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_clahe_clip_limit.setText( Constants.props.getProperty( "txt_clahe_clip_limit" ) + ": " + ( int ) slider_clahe_limit.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         final Text txt_clahe_clip_size = new Text( Constants.props.getProperty( "txt_clahe_clip_size" ) + ": 8" );
         txt_clahe_clip_size.setFont( Constants.default_font );
         final Slider slider_clahe_size = new Slider( 1, 50, 8 );
+        slider_clahe_size.setPrefWidth( 280 );
         slider_clahe_size.setStyle( "-fx-font-size : 14pt" );
         slider_clahe_size.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -215,6 +219,7 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_clahe_clip_size.setText( Constants.props.getProperty( "txt_clahe_clip_size" ) + ": " + ( int ) slider_clahe_size.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         vbox_clahe.getChildren().addAll( txt_clahe_clip_limit, slider_clahe_limit, txt_clahe_clip_size, slider_clahe_size );
@@ -258,6 +263,7 @@ public class ImageProcessing
         final Text txt_brightnesss = new Text( Constants.props.getProperty( "txt_brightnesss" ) + ": 0" );
         txt_brightnesss.setFont( Constants.default_font );
         final Slider slider_brightnesss = new Slider( -255, 255, 0 );
+        slider_brightnesss.setPrefWidth( 280 );
         slider_brightnesss.setStyle( "-fx-font-size : 14pt" );
         slider_brightnesss.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -265,6 +271,7 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_brightnesss.setText( Constants.props.getProperty( "txt_brightnesss" ) + ": " + ( int ) slider_brightnesss.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         vbox_brightnesss.getChildren().addAll( txt_brightnesss, slider_brightnesss );
@@ -272,7 +279,8 @@ public class ImageProcessing
         final VBox vbox_contrast = new VBox( 5 );
         final Text txt_contrast = new Text( Constants.props.getProperty( "txt_contrast" ) + ": 1" );
         txt_contrast.setFont( Constants.default_font );
-        final Slider slider_contrast = new Slider( 0, 10, 1 );
+        final Slider slider_contrast = new Slider( 0, 5, 1 );
+        slider_contrast.setPrefWidth( 280 );
         slider_contrast.setStyle( "-fx-font-size : 14pt" );
         slider_contrast.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -280,6 +288,7 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_contrast.setText( Constants.props.getProperty( "txt_contrast" ) + ": " + new DecimalFormat( "#.##" ).format( slider_contrast.getValue() ) );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         vbox_contrast.getChildren().addAll( txt_contrast, slider_contrast );
@@ -288,6 +297,7 @@ public class ImageProcessing
         final Text txt_deter_coef = new Text( Constants.props.getProperty( "txt_deter_coef" ) + ": 40" );
         txt_deter_coef.setFont( Constants.default_font );
         final Slider slider_deter_coef = new Slider( 1, 255, 40 );
+        slider_deter_coef.setPrefWidth( 280 );
         slider_deter_coef.setStyle( "-fx-font-size : 14pt" );
         slider_deter_coef.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -295,6 +305,7 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_deter_coef.setText( Constants.props.getProperty( "txt_deter_coef" ) + ": " + ( int ) slider_deter_coef.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         vbox_deter.getChildren().addAll( txt_deter_coef, slider_deter_coef );
@@ -303,6 +314,7 @@ public class ImageProcessing
         final Text txt_blur_kernel_size = new Text( Constants.props.getProperty( "txt_blur_kernel_size" ) + ": 40" );
         txt_blur_kernel_size.setFont( Constants.default_font );
         final Slider slider_blur_kernel_size = new Slider( 1, 200, 40 );
+        slider_blur_kernel_size.setPrefWidth( 280 );
         slider_blur_kernel_size.setStyle( "-fx-font-size : 14pt" );
         slider_blur_kernel_size.valueProperty().addListener( new ChangeListener<Number>()
         {
@@ -310,10 +322,28 @@ public class ImageProcessing
             public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
             {
                 txt_blur_kernel_size.setText( Constants.props.getProperty( "txt_blur_kernel_size" ) + ": " + ( int ) slider_blur_kernel_size.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
             }
         } );
         vbox_blur.getChildren().addAll( txt_blur_kernel_size, slider_blur_kernel_size );
         vbox_blur.visibleProperty().bind( combobox_operations.getSelectionModel().selectedItemProperty().asString().isEqualTo( Operation_types.blurred ) );
+        final VBox vbox_ghost_size = new VBox( 5 );
+        final Text txt_ghost_size = new Text( Constants.props.getProperty( "txt_ghost_size" ) + ": 10" );
+        txt_ghost_size.setFont( Constants.default_font );
+        final Slider slider_ghost_size = new Slider( 2, 100, 0 );
+        slider_ghost_size.setPrefWidth( 280 );
+        slider_ghost_size.setStyle( "-fx-font-size : 14pt" );
+        slider_ghost_size.valueProperty().addListener( new ChangeListener<Number>()
+        {
+            @Override
+            public void changed( ObservableValue<? extends Number> observable, Number oldValue, Number newValue )
+            {
+                txt_ghost_size.setText( Constants.props.getProperty( "txt_ghost_size" ) + ": " + ( int ) slider_ghost_size.getValue() );
+                btn_apply.setStyle( "-fx-background-color: LightSalmon;" );
+            }
+        } );
+        vbox_ghost_size.getChildren().addAll( txt_ghost_size, slider_ghost_size );
+        vbox_ghost_size.visibleProperty().bind( combobox_operations.getSelectionModel().selectedItemProperty().asString().isEqualTo( Operation_types.ghost ) );
         final VBox vbox_set_rgb = new VBox( 5 );
         Text txt_set_rgb = new Text( Constants.props.getProperty( "txt_set_rgb" ) );
         txt_set_rgb.setFont( Constants.default_font );
@@ -342,7 +372,6 @@ public class ImageProcessing
         textfield_change_rgb_B.setFont( Constants.default_font );
         vbox_change_rgb.getChildren().addAll( txt_change_rgb, new HBox( 5, textfield_change_rgb_R, textfield_change_rgb_G, textfield_change_rgb_B ) );
         vbox_change_rgb.visibleProperty().bind( combobox_operations.getSelectionModel().selectedItemProperty().asString().isEqualTo( Operation_types.change_RGB ) );
-        final Button btn_apply = new Button( Constants.props.getProperty( "btn_apply" ) );
         btn_apply.setFont( Constants.default_font );
         btn_apply.setTranslateY( 60 );
         final String original_style = btn_apply.getStyle();
@@ -382,6 +411,11 @@ public class ImageProcessing
                     else if ( newValue.toString().equals( Operation_types.brightnesss ) )
                     {
                         slider_brightnesss.setValue( this_operation.get_brightnesss() );
+                        btn_apply.setTranslateY( 130 );
+                    }
+                    else if ( newValue.toString().equals( Operation_types.ghost ) )
+                    {
+                        slider_ghost_size.setValue( this_operation.get_ghost_size() );
                         btn_apply.setTranslateY( 130 );
                     }
                     else if ( newValue.toString().equals( Operation_types.contrast ) )
@@ -446,6 +480,7 @@ public class ImageProcessing
                 else if ( combobox_operations.getSelectionModel().getSelectedItem().toString().equals( Operation_types.ghost ) )
                 {
                     this_operation.set_op_name( Operation_types.ghost );
+                    this_operation.set_ghost_size( ( int ) slider_ghost_size.getValue() );
                 }
                 else if ( combobox_operations.getSelectionModel().getSelectedItem().toString().equals( Operation_types.deterioration ) )
                 {
@@ -539,11 +574,12 @@ public class ImageProcessing
         vbox_contrast.setTranslateY( 60 );
         vbox_blur.setTranslateY( 60 );
         vbox_deter.setTranslateY( 60 );
+        vbox_ghost_size.setTranslateY( 60 );
         vbox_brightnesss.setTranslateY( 60 );
         vbox_set_rgb.setTranslateY( 60 );
         vbox_change_rgb.setTranslateY( 60 );
         vbox_clahe.setTranslateY( 60 );
-        vbox_operation.getChildren().addAll( txt_operation, combobox_operations, vbox_crop_rgb, vbox_convolution, vbox_contrast, vbox_set_rgb, vbox_change_rgb, vbox_deter, vbox_blur, vbox_brightnesss, vbox_clahe, btn_apply );
+        vbox_operation.getChildren().addAll( txt_operation, combobox_operations, vbox_crop_rgb, vbox_convolution, vbox_contrast, vbox_brightnesss, vbox_set_rgb, vbox_change_rgb, vbox_deter, vbox_blur, vbox_ghost_size, vbox_clahe, btn_apply );
         return vbox_operation;
     }
 
@@ -553,6 +589,13 @@ public class ImageProcessing
         {
             capture_view = new Cam_capture( ( int ) capture.get( Videoio.CAP_PROP_FRAME_WIDTH ), ( int ) capture.get( Videoio.CAP_PROP_FRAME_HEIGHT ), ( int ) ( 1000 / refreshMilisecond ) );
             capture_view.get_stage().setOnCloseRequest( cam_capture_closing() );
+            for ( Operation operation : operations )
+            {
+                if ( operation.get_op_name().equals( Operation_types.ghost ) )
+                {
+                    operation.initialize_ghost_mats();
+                }
+            }
             TimerTask frameGrabber = new TimerTask()
             {
                 @Override
@@ -687,6 +730,10 @@ public class ImageProcessing
                     {
                         ops_info += Operation_types.op_blurred + ";" + some_operation.get_blur_size() + "\n";
                     }
+                    else if ( some_operation.get_op_name().equals( Operation_types.blurred ) )
+                    {
+                        ops_info += Operation_types.op_ghost + ";" + some_operation.get_ghost_size() + "\n";
+                    }
                     else if ( some_operation.get_op_name().equals( Operation_types.deterioration ) )
                     {
                         ops_info += Operation_types.op_deterioration + ";" + some_operation.get_deterioration() + "\n";
@@ -804,6 +851,11 @@ public class ImageProcessing
                                 {
                                     operation_to_set.set_op_name( Operation_types.blurred );
                                     operation_to_set.set_blur_size( Integer.parseInt( op_infos.get( i ).split( ";" )[1] ) );
+                                }
+                                else if ( op_infos.get( i ).startsWith( Operation_types.op_ghost ) )
+                                {
+                                    operation_to_set.set_op_name( Operation_types.ghost );
+                                    operation_to_set.set_ghost_size( Integer.parseInt( op_infos.get( i ).split( ";" )[1] ) );
                                 }
                                 else if ( op_infos.get( i ).startsWith( Operation_types.op_deterioration ) )
                                 {
