@@ -83,12 +83,14 @@ public class ImageProcessing
         capture = new VideoCapture();
         desktop_path = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\";
         final VBox root = new VBox( 10 );
-        final Scene scene = new Scene( root, ( number_of_operations * 295 ) + 10, 330 );
+        final Scene scene = new Scene( root, ( number_of_operations * 295 ) + 10, 320 );
+        root.setStyle( "-fx-background-color:  #dc7fb1, linear-gradient(#ffffff, #66ccff)" );
         HBox hbox_buttons = build_main_buttons();
         HBox hbox_ops = build_hbox_ops();
         root.getChildren().addAll( hbox_buttons, hbox_ops );
         primaryStage.setTitle( "RealTime Image Processing" );
         primaryStage.setScene( scene );
+        primaryStage.setResizable( false );
         main_window = primaryStage.getOwner();
         primaryStage.setOnCloseRequest( new EventHandler<WindowEvent>()
         {
@@ -100,7 +102,6 @@ public class ImageProcessing
                 System.exit( 1 );
             }
         } );
-        primaryStage.setMinHeight( scene.getHeight() + 45 );
         primaryStage.show();
     }
 
@@ -138,6 +139,7 @@ public class ImageProcessing
         btn_how_to.setFont( Constants.default_font );
         btn_capture_file.setFont( Constants.default_font );
         btn_capture_image.setFont( Constants.default_font );
+        btn_reset_ops.setStyle( "-fx-background-color: Red;" );
         textfield_width = new TextField( "1280" );
         textfield_height = new TextField( "720" );
         textfield_height.setFont( Constants.default_font );
