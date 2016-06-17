@@ -71,7 +71,7 @@ public class ImageProcessing
     //most used
     private Image final_image;
     private MatOfByte mem;
-    private Mat currentFrame;
+    private Mat processed_frame;
 
     public void start( final Stage primaryStage )
     {
@@ -443,6 +443,10 @@ public class ImageProcessing
                     this_operation.set_op_name( Operation_types.blurred );
                     this_operation.set_blur_size( ( int ) slider_blur_kernel_size.getValue() );
                 }
+                else if ( combobox_operations.getSelectionModel().getSelectedItem().toString().equals( Operation_types.ghost ) )
+                {
+                    this_operation.set_op_name( Operation_types.ghost );
+                }
                 else if ( combobox_operations.getSelectionModel().getSelectedItem().toString().equals( Operation_types.deterioration ) )
                 {
                     this_operation.set_op_name( Operation_types.deterioration );
@@ -569,15 +573,15 @@ public class ImageProcessing
     private Image grabFrame()
     {
         final_image = null;
-        Mat some_frame = new Mat();
+        Mat original_frame = new Mat();
         if ( capture.isOpened() )
         {
-            capture.read( some_frame );
-            if ( !some_frame.empty() )
+            capture.read( original_frame );
+            if ( !original_frame.empty() )
             {
-                currentFrame = Operator.do_operations( some_frame, operations );
+                processed_frame = Operator.do_operations( original_frame, operations );
                 mem = new MatOfByte();
-                imencode( ".bmp", currentFrame, mem );
+                imencode( ".bmp", processed_frame, mem );
                 final_image = new Image( new ByteArrayInputStream( mem.toArray() ) );
             }
         }
@@ -659,7 +663,7 @@ public class ImageProcessing
             public void handle( ActionEvent event )
             {
                 LocalDateTime now = java.time.LocalDateTime.now();
-                Imgcodecs.imwrite( desktop_path + "Saved " + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".bmp", currentFrame );
+                Imgcodecs.imwrite( desktop_path + "Saved " + now.getDayOfMonth() + "-" + now.getMonthValue() + "-" + now.getYear() + "-" + now.getHour() + "-" + now.getMinute() + "-" + now.getSecond() + ".bmp", processed_frame );
                 Message_box.show( Constants.props.getProperty( "msg_image_saved" ), "Info", Message_box.info_message );
             }
         };

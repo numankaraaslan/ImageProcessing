@@ -1,11 +1,15 @@
 package imageprocessing;
 
+import java.util.LinkedList;
+import org.opencv.core.Mat;
+
 public class Operation
 {
     private final int operation_number;
     private String op_name;
     private int crop_low, crop_high, set_R, set_G, set_B, brightnesss = 0, blur_size = 40, clahe_limit = 40, clahe_size = 8, deterioration = 40, change_R, change_G, change_B;
     private double contrast = 1.0;
+    private LinkedList<Mat> ghost_mats;
     private double[][] convolution = new double[][]
     {
         new double[]
@@ -36,11 +40,26 @@ public class Operation
     {
         this.operation_number = i;
         op_name = Operation_types.normal;
+        ghost_mats = new LinkedList<>();
     }
 
     public int get_operation_number()
     {
         return operation_number;
+    }
+
+    public LinkedList<Mat> get_ghost_mats()
+    {
+        return ghost_mats;
+    }
+
+    public void add_ghost_mat( Mat new_mat )
+    {
+        if ( ghost_mats.size() > 9 )
+        {
+            ghost_mats.removeFirst();
+        }
+        ghost_mats.add( new_mat );
     }
 
     public void set_convolution( double[][] convolution )

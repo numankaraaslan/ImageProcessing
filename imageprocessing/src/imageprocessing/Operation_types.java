@@ -20,6 +20,7 @@ public class Operation_types
     public static String deterioration;
     public static String clahe;
     public static String contrast;
+    public static String ghost;
 
     public static String op_normal = "op_normal";
     public static String op_edge_detect = "op_edge";
@@ -37,6 +38,7 @@ public class Operation_types
     public static String op_deterioration = "op_degr";
     public static String op_clahe = "op_clahe";
     public static String op_contrast = "op_contrast";
+    public static String op_ghost = "op_ghost";
 
     public static void set_all( Properties props )
     {
@@ -56,13 +58,14 @@ public class Operation_types
         deterioration = props.getProperty( "ops.deterioration" );
         clahe = props.getProperty( "ops.clahe" );
         contrast = props.getProperty( "ops.contrast" );
+        ghost = props.getProperty( "ops.ghost" );
     }
 
     public static Object[] get_all()
     {
         return new String[]
         {
-            normal, edge_detect, grayscale, binary, negative, dilate, erode, deterioration, clahe, blurred, crop_RGB, brightnesss, contrast, set_RGB, change_RGB, convolution
+            normal, edge_detect, grayscale, binary, negative, dilate, erode, deterioration, clahe, blurred, ghost, crop_RGB, brightnesss, contrast, set_RGB, change_RGB, convolution
         };
     }
 
