@@ -84,7 +84,7 @@ public class ImageProcessing
         desktop_path = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\";
         final VBox root = new VBox( 10 );
         final Scene scene = new Scene( root, ( number_of_operations * 295 ) + 10, 320 );
-        root.setStyle( "-fx-background-color:  #dc7fb1, linear-gradient(#ffffff, #66ccff)" );
+        root.setStyle( "-fx-background-color: linear-gradient(#ffffff, #66ccff)" );
         HBox hbox_buttons = build_main_buttons();
         HBox hbox_ops = build_hbox_ops();
         root.getChildren().addAll( hbox_buttons, hbox_ops );

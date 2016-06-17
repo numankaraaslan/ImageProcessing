@@ -31,7 +31,7 @@ public class How_to
         aciklama = Constants.props.getProperty( "how_to" );
         txt_how_to = TextBuilder.create().text( aciklama ).font( Constants.default_font ).textAlignment( TextAlignment.JUSTIFY ).wrappingWidth( Screen.getPrimary().getBounds().getWidth() - 140 ).translateX( 10 ).translateY( 10 ).build();
         ScrollPane sp = new ScrollPane();
-        sp.setPrefWidth( Screen.getPrimary().getBounds().getWidth() - 120 );
+        sp.setPrefWidth( Screen.getPrimary().getBounds().getWidth() - 130 );
         sp.setPrefHeight( 500 );
         sp.setVmax( 500 );
         sp.setHmax( Screen.getPrimary().getBounds().getWidth() - 120 );
