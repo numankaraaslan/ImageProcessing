@@ -49,7 +49,7 @@ public class ImageProcessing
 
     private LinkedList<Operation> operations;
     private LinkedList<ComboBox> comboboxes;
-    private int number_of_operations;
+    private int number_of_operations, horizontal_count;
     private VideoCapture capture;
     private Window main_window;
     private String file_path;
@@ -83,12 +83,19 @@ public class ImageProcessing
         capture = new VideoCapture();
         desktop_path = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\";
         final VBox root = new VBox( 10 );
-        final Scene scene = new Scene( root, ( number_of_operations * 295 ) + 10, 320 );
+        int window_width, window_height;
+        window_width = number_of_operations < horizontal_count ? ( number_of_operations * 295 ) + 10 : ( horizontal_count * 295 ) + 10;
+        window_height = ( int ) ( number_of_operations < horizontal_count ? 320 : Math.ceil( ( double ) number_of_operations / ( double ) horizontal_count ) * 300 );
+        if ( horizontal_count < 4 )
+        {
+            window_height += 50;
+        }
+        final Scene scene = new Scene( root, window_width, window_height );
         root.setStyle( "-fx-background-color: linear-gradient(#ffffff, #66ccff)" );
-        HBox hbox_buttons = build_main_buttons();
-        HBox hbox_ops = build_hbox_ops();
+        VBox hbox_buttons = build_main_buttons();
+        VBox hbox_ops = build_hbox_ops();
         root.getChildren().addAll( hbox_buttons, hbox_ops );
-        primaryStage.setTitle( "RealTime Image Processing" );
+        primaryStage.setTitle( "Realtime Image Processing" );
         primaryStage.setScene( scene );
         primaryStage.setResizable( false );
         main_window = primaryStage.getOwner();
@@ -105,9 +112,14 @@ public class ImageProcessing
         primaryStage.show();
     }
 
-    public void set_op_count( Integer op_count )
+    public void set_op_count( int op_count )
     {
         this.number_of_operations = op_count;
+    }
+
+    public void set_horizontal_count( int horizontal_count )
+    {
+        this.horizontal_count = horizontal_count;
     }
 
     public void set_props( Properties props )
@@ -115,7 +127,7 @@ public class ImageProcessing
         Constants.props = props;
     }
 
-    private HBox build_main_buttons()
+    private VBox build_main_buttons()
     {
         btn_capture_camera = new Button( Constants.props.getProperty( "btn_capture_camera" ) );
         btn_capture_file = new Button( Constants.props.getProperty( "btn_capture_file" ) );
@@ -149,25 +161,46 @@ public class ImageProcessing
         txt_X = new Text( "X" );
         txt_X.setTranslateY( 5 );
         txt_X.setFont( Constants.default_font );
-        HBox hbox_buttons = new HBox( 10, textfield_width, txt_X, textfield_height, btn_capture_camera, btn_capture_file, btn_capture_image, btn_save_ops, btn_load_ops, btn_reset_ops, btn_how_to );
-        hbox_buttons.setTranslateX( 10 );
-        hbox_buttons.setTranslateY( 10 );
-        return hbox_buttons;
+        VBox vbox_buttons = null;
+        if ( horizontal_count < 4 )
+        {
+            HBox hbox_control_buttons = new HBox( 10, textfield_width, txt_X, textfield_height, btn_capture_camera, btn_capture_file );
+            HBox hbox_opton_buttons = new HBox( 10, btn_capture_image, btn_save_ops, btn_load_ops, btn_reset_ops, btn_how_to );
+            vbox_buttons = new VBox( 10, hbox_control_buttons, hbox_opton_buttons );
+        }
+        else
+        {
+            vbox_buttons = new VBox( 10, new HBox( 10, textfield_width, txt_X, textfield_height, btn_capture_camera, btn_capture_file, btn_capture_image, btn_save_ops, btn_load_ops, btn_reset_ops, btn_how_to ) );
+        }
+        vbox_buttons.setTranslateX( 10 );
+        vbox_buttons.setTranslateY( 10 );
+        return vbox_buttons;
     }
 
-    private HBox build_hbox_ops()
+    private VBox build_hbox_ops()
     {
-        HBox hbox_ops = new HBox( 10 );
+        VBox vbox_ops_all = new VBox( 10 );
+        ArrayList<HBox> hbox_ops_lines = new ArrayList<>();
+        HBox hbox_ops_line = new HBox( 10 );
+        hbox_ops_line.setMinHeight( 270 );
+        hbox_ops_lines.add( hbox_ops_line );
         for ( int i = 0; i < number_of_operations; i++ )
         {
             Group vbox_ops = build_vbox_ops( i );
-            hbox_ops.getChildren().add( vbox_ops );
+            hbox_ops_line.getChildren().add( vbox_ops );
             Operation some_operation = new Operation( i );
             operations.add( some_operation );
+            if ( ( i + 1 ) % horizontal_count == 0 )
+            {
+                hbox_ops_line = new HBox( 10 );
+                hbox_ops_line.setMinHeight( 270 );
+                hbox_ops_lines.add( hbox_ops_line );
+            }
         }
-        hbox_ops.setTranslateX( 10 );
-        hbox_ops.setTranslateY( 10 );
-        return hbox_ops;
+        vbox_ops_all.getChildren().addAll( hbox_ops_lines );
+        vbox_ops_all.setTranslateX( 10 );
+        vbox_ops_all.setTranslateY( 10 );
+        return vbox_ops_all;
     }
 
     private Group build_vbox_ops( final int op_number )

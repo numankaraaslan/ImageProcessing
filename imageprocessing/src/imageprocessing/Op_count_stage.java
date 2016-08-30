@@ -23,23 +23,31 @@ import javafx.stage.WindowEvent;
 public class Op_count_stage extends Application
 {
     private ComboBox<Integer> combobox_op_count;
+    private int horizontal_count;
     private ImageProcessing main_window;
     private EventHandler<ActionEvent> locale_tr_action;
     private EventHandler<ActionEvent> locale_en_action;
     @Override
     public void start( final Stage primaryStage ) throws Exception
     {
-        check_screen_res();
         Constants.default_font = Font.font( "Arial", 18 );
         main_window = new ImageProcessing();
-        get_props( "TR" );
+        get_props( "EN" );
+        check_screen_res();
         primaryStage.setResizable( false );
         VBox root = new VBox( 10 );
         VBox vbox_op_count = new VBox( 10 );
         combobox_op_count = new ComboBox<>();
         combobox_op_count.setPrefWidth( 290 );
         combobox_op_count.setStyle( "-fx-font-size : 16pt" );
-        for ( int i = 3; i < 10; i++ )
+        horizontal_count = ( int ) ( Screen.getPrimary().getBounds().getWidth() / 300 );
+        if ( horizontal_count < 3 )
+        {
+            horizontal_count = 3;
+        }
+        int vertical_count = ( int ) ( ( Screen.getPrimary().getBounds().getHeight() - 100 ) / 300 );
+        int op_count_max = horizontal_count * vertical_count;
+        for ( int i = horizontal_count < 4 ? 2 : 3; i < op_count_max; i++ )
         {
             combobox_op_count.getItems().add( i + 1 );
         }
@@ -57,6 +65,7 @@ public class Op_count_stage extends Application
             public void handle( ActionEvent event )
             {
                 main_window.set_op_count( combobox_op_count.getSelectionModel().getSelectedItem() );
+                main_window.set_horizontal_count( horizontal_count );
                 main_window.start( new Stage() );
                 primaryStage.close();
             }
@@ -79,7 +88,7 @@ public class Op_count_stage extends Application
         ToggleGroup some_group = new ToggleGroup();
         RadioButton locale_TR = new RadioButton( "TR" );
         RadioButton locale_EN = new RadioButton( "EN" );
-        locale_TR.setSelected( true );
+        locale_EN.setSelected( true );
         locale_tr_action = new EventHandler<ActionEvent>()
         {
             @Override
@@ -124,6 +133,7 @@ public class Op_count_stage extends Application
             public void handle( WindowEvent event )
             {
                 main_window.set_op_count( combobox_op_count.getSelectionModel().getSelectedItem() );
+                main_window.set_horizontal_count( horizontal_count );
                 main_window.start( new Stage() );
             }
         };
@@ -146,7 +156,7 @@ public class Op_count_stage extends Application
 
     private void check_screen_res()
     {
-        if ( Screen.getPrimary().getBounds().getWidth() < 1280 || Screen.getPrimary().getBounds().getHeight() < 720 )
+        if ( Screen.getPrimary().getBounds().getWidth() < 1024 || Screen.getPrimary().getBounds().getHeight() < 480 )
         {
             Message_box.show( Constants.props.getProperty( "res_warning" ), Constants.props.getProperty( "warning" ), Message_box.warning_message );
         }
