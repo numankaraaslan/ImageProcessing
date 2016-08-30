@@ -1,5 +1,5 @@
 # imageProcessing
 
-You need opencv and environment variable settings in your computer.
+You need opencv and environment variable settings adn JDK8 in your computer.
 
 So clone it and understand it yourself ;)
