@@ -1,6 +1,5 @@
 package imageprocessing;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 import javafx.application.Application;
@@ -133,7 +132,7 @@ public class Op_count_stage extends Application
     private void get_props( String locale )
     {
         Constants.props = new Properties();
-        try ( InputStream input = locale.equals( "TR" ) ? new FileInputStream( "src\\imageprocessing\\strings_tr_TR.properties" ) : new FileInputStream( "src\\imageprocessing\\strings_en_US.properties" ) )
+        try ( InputStream input = locale.equals( "TR" ) ? ImageProcessing.class.getResourceAsStream( "strings_tr_TR.properties" ) : ImageProcessing.class.getResourceAsStream( "strings_en_US.properties" ) )
         {
             Constants.props.load( input );
         }

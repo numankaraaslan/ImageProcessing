@@ -229,11 +229,6 @@ class Deteriorationthread extends Thread
         this.currentFrame = currentFrame;
     }
 
-    public Mat get_currentFrame()
-    {
-        return currentFrame;
-    }
-
     private static Runnable do_deterioration( final int coef, final Mat currentFrame )
     {
         return new Runnable()
@@ -246,7 +241,7 @@ class Deteriorationthread extends Thread
                     for ( int m = 0; m < currentFrame.width(); m++ )
                     {
                         double[] BGR = currentFrame.get( k, m );
-                        if ( BGR[0] + BGR[1] + BGR[2] > 384 )
+                        if ( BGR[0] > 127 || BGR[1] > 127 || BGR[2] > 127 )
                         {
                             BGR[0] = BGR[0] + coef > 255 ? 255 : BGR[0] + coef;
                             BGR[1] = BGR[1] + coef > 255 ? 255 : BGR[1] + coef;
