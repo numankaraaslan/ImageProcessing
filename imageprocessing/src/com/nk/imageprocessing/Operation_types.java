@@ -93,7 +93,7 @@ public class Operation_types
 		ghost = props.getProperty("ops.ghost");
 	}
 
-	public static Object[] get_all()
+	public static String[] get_all()
 	{
 		return new String[]
 		{ normal, edge_detect, grayscale, binary, negative, dilate, erode, deterioration, clahe, blurred, ghost, crop_RGB, brightnesss, contrast, set_RGB, change_RGB, convolution };

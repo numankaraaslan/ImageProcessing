@@ -45,7 +45,7 @@ public class ImageProcessing extends Application
 {
 	private LinkedList<Operation> operations;
 
-	private LinkedList<ComboBox> comboboxes;
+	private LinkedList<ComboBox<String>> comboboxes;
 
 	private int number_of_operations, horizontal_count;
 
@@ -233,7 +233,7 @@ public class ImageProcessing extends Application
 		final Group vbox_operation = new Group();
 		Text txt_operation = new Text(Constants.props.getProperty("txt_operation") + (op_number + 1));
 		txt_operation.setFont(Constants.default_font);
-		final ComboBox combobox_operations = new ComboBox();
+		final ComboBox<String> combobox_operations = new ComboBox<>();
 		final Button btn_apply = new Button(Constants.props.getProperty("btn_apply"));
 		combobox_operations.getItems().addAll(Operation_types.get_all());
 		combobox_operations.setStyle("-fx-font-size : 14pt");
@@ -435,10 +435,10 @@ public class ImageProcessing extends Application
 		btn_apply.setFont(Constants.default_font);
 		btn_apply.setTranslateY(60);
 		final String original_style = btn_apply.getStyle();
-		combobox_operations.getSelectionModel().selectedItemProperty().addListener(new ChangeListener()
+		combobox_operations.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>()
 		{
 			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue)
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
 			{
 				if (!oldValue.equals(newValue))
 				{
@@ -1006,7 +1006,7 @@ public class ImageProcessing extends Application
 			public void handle(ActionEvent t)
 			{
 				load_from_file = true;
-				for (ComboBox combobox_op : comboboxes)
+				for (ComboBox<String> combobox_op : comboboxes)
 				{
 					combobox_op.getSelectionModel().selectFirst();
 				}
