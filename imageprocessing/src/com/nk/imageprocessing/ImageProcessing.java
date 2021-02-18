@@ -49,7 +49,7 @@ public class ImageProcessing extends Application
 
 	private int number_of_operations, horizontal_count;
 
-	private VideoCapture capture;
+	private VideoCapture video_capturer;
 
 	private Window main_window;
 
@@ -81,14 +81,12 @@ public class ImageProcessing extends Application
 
 	private TextField textfield_height;
 
-	private boolean load_from_file;
+	private boolean loaded_from_file;
 
 	private Text txt_X;
 
 	//most used
-	private Image final_image;
-
-	private MatOfByte mem;
+	private Image captured_image;
 
 	private Mat processed_frame;
 	static
@@ -104,8 +102,8 @@ public class ImageProcessing extends Application
 		comboboxes = new LinkedList<>();
 		Operator.processors = (int) (Runtime.getRuntime().availableProcessors() * 1.5);
 		Operator.threads = new Deteriorationthread[Operator.processors];
-		load_from_file = false;
-		capture = new VideoCapture();
+		loaded_from_file = false;
+		video_capturer = new VideoCapture();
 		desktop_path = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath() + "\\";
 		final VBox root = new VBox(10);
 		int window_width, window_height;
@@ -129,7 +127,7 @@ public class ImageProcessing extends Application
 			@Override
 			public void handle(WindowEvent event)
 			{
-				capture.release();
+				video_capturer.release();
 				capture_view = null;
 				System.exit(1);
 			}
@@ -390,7 +388,10 @@ public class ImageProcessing extends Application
 		final VBox vbox_ghost_size = new VBox(5);
 		final Text txt_ghost_size = new Text(Constants.props.getProperty("txt_ghost_size") + ": 10");
 		txt_ghost_size.setFont(Constants.default_font);
-		final Slider slider_ghost_size = new Slider(2, 100, 0);
+		final Slider slider_ghost_size = new Slider(2, 60, 5);
+		slider_ghost_size.setBlockIncrement(1);
+		slider_ghost_size.setMinorTickCount(1);
+		slider_ghost_size.setMajorTickUnit(1);
 		slider_ghost_size.setPrefWidth(280);
 		slider_ghost_size.setStyle("-fx-font-size : 14pt");
 		slider_ghost_size.valueProperty().addListener(new ChangeListener<Number>()
@@ -511,7 +512,7 @@ public class ImageProcessing extends Application
 					{
 						btn_apply.setTranslateY(60);
 					}
-					if (!load_from_file)
+					if (!loaded_from_file)
 					{
 						btn_apply.setStyle("-fx-background-color: LightSalmon;");
 					}
@@ -639,9 +640,9 @@ public class ImageProcessing extends Application
 
 	private void startGrabbing()
 	{
-		if (capture.isOpened())
+		if (video_capturer.isOpened())
 		{
-			capture_view = new Cam_capture((int) capture.get(Videoio.CAP_PROP_FRAME_WIDTH), (int) capture.get(Videoio.CAP_PROP_FRAME_HEIGHT), (int) (1000 / refreshMilisecond));
+			capture_view = new Cam_capture((int) video_capturer.get(Videoio.CAP_PROP_FRAME_WIDTH), (int) video_capturer.get(Videoio.CAP_PROP_FRAME_HEIGHT), (int) (1000 / refreshMilisecond));
 			capture_view.get_stage().setOnCloseRequest(cam_capture_closing());
 			for (Operation operation : operations)
 			{
@@ -661,28 +662,24 @@ public class ImageProcessing extends Application
 			timer = new Timer();
 			timer.schedule(frameGrabber, 0, refreshMilisecond);
 		}
-		else
-		{
-			System.err.println("Impossible to open the camera connection...");
-		}
 	}
 
 	private Image grabFrame()
 	{
-		final_image = null;
+		captured_image = null;
 		Mat original_frame = new Mat();
-		if (capture.isOpened())
+		if (video_capturer.isOpened())
 		{
-			capture.read(original_frame);
+			video_capturer.read(original_frame);
 			if (!original_frame.empty())
 			{
 				processed_frame = Operator.do_operations(original_frame, operations);
-				mem = new MatOfByte();
-				Imgcodecs.imencode(".bmp", processed_frame, mem);
-				final_image = new Image(new ByteArrayInputStream(mem.toArray()));
+				MatOfByte byte_matrix = new MatOfByte();
+				Imgcodecs.imencode(".bmp", processed_frame, byte_matrix);
+				captured_image = new Image(new ByteArrayInputStream(byte_matrix.toArray()));
 			}
 		}
-		return final_image;
+		return captured_image;
 	}
 
 	private Operation find_operation(int number_to_find)
@@ -704,16 +701,24 @@ public class ImageProcessing extends Application
 			@Override
 			public void handle(ActionEvent event)
 			{
-				btn_capture_image.setDisable(false);
-				capture.release();
-				capture.open(0);
-				if (capture.get(Videoio.CAP_PROP_FPS) != 0)
+				video_capturer.release();
+				video_capturer.open(0);
+				if (video_capturer.get(Videoio.CAP_PROP_FPS) != 0)
 				{
-					refreshMilisecond = 1000 / (int) capture.get(Videoio.CAP_PROP_FPS) - 1;
+					refreshMilisecond = 1000 / (int) video_capturer.get(Videoio.CAP_PROP_FPS) - 1;
 				}
-				capture.set(Videoio.CAP_PROP_FRAME_WIDTH, textfield_width.getText().equals("") ? -1 : Integer.parseInt(textfield_width.getText()));
-				capture.set(Videoio.CAP_PROP_FRAME_HEIGHT, textfield_height.getText().equals("") ? -1 : Integer.parseInt(textfield_height.getText()));
+				video_capturer.set(Videoio.CAP_PROP_FRAME_WIDTH, textfield_width.getText().equals("") ? -1 : Integer.parseInt(textfield_width.getText()));
+				video_capturer.set(Videoio.CAP_PROP_FRAME_HEIGHT, textfield_height.getText().equals("") ? -1 : Integer.parseInt(textfield_height.getText()));
 				startGrabbing();
+				if (!video_capturer.isOpened())
+				{
+					Message_box.show(Constants.props.getProperty("msg_capture_video_error"), "Error", Message_box.warning_message);
+					btn_capture_image.setDisable(true);
+				}
+				else
+				{
+					btn_capture_image.setDisable(false);
+				}
 			}
 		};
 	}
@@ -739,14 +744,22 @@ public class ImageProcessing extends Application
 				}
 				if (!file_path.equals(""))
 				{
-					capture.release();
-					capture.open(file_path);
-					if (capture.get(Videoio.CAP_PROP_FPS) != 0)
+					video_capturer.release();
+					video_capturer.open(file_path);
+					if (video_capturer.get(Videoio.CAP_PROP_FPS) != 0)
 					{
-						refreshMilisecond = (long) (1000 / capture.get(Videoio.CAP_PROP_FPS));
+						refreshMilisecond = (long) (1000 / video_capturer.get(Videoio.CAP_PROP_FPS));
 					}
 					startGrabbing();
-					btn_capture_image.setDisable(false);
+					if (!video_capturer.isOpened())
+					{
+						Message_box.show(Constants.props.getProperty("msg_capture_video_error"), "Error", Message_box.warning_message);
+						btn_capture_image.setDisable(true);
+					}
+					else
+					{
+						btn_capture_image.setDisable(false);
+					}
 				}
 			}
 		};
@@ -983,9 +996,9 @@ public class ImageProcessing extends Application
 							{
 								operations.set(i, operation_to_set);
 							}
-							load_from_file = true;
+							loaded_from_file = true;
 							comboboxes.get(i).getSelectionModel().select(operation_to_set.get_op_name());
-							load_from_file = false;
+							loaded_from_file = false;
 						}
 						Message_box.show(Constants.props.getProperty("config.loaded"), "Info", Message_box.info_message);
 					}
@@ -1005,7 +1018,7 @@ public class ImageProcessing extends Application
 			@Override
 			public void handle(ActionEvent t)
 			{
-				load_from_file = true;
+				loaded_from_file = true;
 				for (ComboBox<String> combobox_op : comboboxes)
 				{
 					combobox_op.getSelectionModel().selectFirst();
@@ -1014,7 +1027,7 @@ public class ImageProcessing extends Application
 				{
 					operations.set(k, new Operation(k));
 				}
-				load_from_file = false;
+				loaded_from_file = false;
 			}
 		};
 	}
@@ -1038,7 +1051,7 @@ public class ImageProcessing extends Application
 			@Override
 			public void handle(WindowEvent event)
 			{
-				capture.release();
+				video_capturer.release();
 				timer.cancel();
 				btn_capture_image.setDisable(true);
 			}

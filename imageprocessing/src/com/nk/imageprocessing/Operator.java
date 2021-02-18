@@ -35,16 +35,14 @@ public class Operator
 			{
 				some_operation.add_ghost_mat(original_frame);
 				LinkedList<Mat> ghost_mats = some_operation.get_ghost_mats();
-				double interval = (double) ((double) 1 / (double) (ghost_mats.size() * (ghost_mats.size() + 1) / 2));
-				double alpha = interval;
-				Mat some_frame = ghost_mats.getFirst();
-				Core.multiply(some_frame, new Scalar(alpha), some_frame);
-				for (int i = 1; i < ghost_mats.size(); i++)
+				double interval = (double) 1 / (double) (ghost_mats.size() * (ghost_mats.size() + 1) / 2);
+				original_frame = new Mat(original_frame.rows(), original_frame.cols(), original_frame.type());
+				for (int i = 0; i < ghost_mats.size(); i++)
 				{
-					alpha += interval;
-					Core.addWeighted(some_frame, 1, ghost_mats.get(i), alpha + interval, 0, some_frame);
+					Mat temp_frame = new Mat();
+					Core.multiply(ghost_mats.get(i), new Scalar(interval * (i + 1), interval * (i + 1), interval * (i + 1)), temp_frame);
+					Core.add(original_frame, temp_frame, original_frame);
 				}
-				original_frame = some_frame;
 			}
 			else if (some_operation.get_op_name().equals(Operation_types.deterioration))
 			{
@@ -183,7 +181,7 @@ public class Operator
 
 	private static void thread_work(Mat currentFrame, int coef)
 	{
-		int interval = (currentFrame.height() / processors);
+		int interval = currentFrame.height() / processors;
 		if (processors >= 8)
 		{
 			interval++;
@@ -198,12 +196,12 @@ public class Operator
 			end = (i + 1) * interval < currentFrame.height() ? (i + 1) * interval : currentFrame.height();
 			Deteriorationthread d_thread = new Deteriorationthread(coef, currentFrame.submat(i * interval, end, 0, currentFrame.width()));
 			threads[ i ] = d_thread;
+			threads[ i ].start();
 		}
 		boolean done;
-		for (Deteriorationthread d_thread : threads)
-		{
-			d_thread.start();
-		}
+		//		for (Deteriorationthread d_thread : threads)
+		//		{
+		//		}
 		do
 		{
 			done = true;
@@ -222,12 +220,9 @@ public class Operator
 
 class Deteriorationthread extends Thread
 {
-	private final Mat currentFrame;
-
 	public Deteriorationthread(int coef, Mat currentFrame)
 	{
 		super(do_deterioration(coef, currentFrame));
-		this.currentFrame = currentFrame;
 	}
 
 	private static Runnable do_deterioration(final int coef, final Mat currentFrame)

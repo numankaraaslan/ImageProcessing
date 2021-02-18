@@ -7,7 +7,7 @@
 	<packaging>jar</packaging>
 	<name>Realtime Image Processing</name>
 	<description>A realtime image processing app with multiple operations</description>
-	
+
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -29,19 +29,20 @@ public class Message_box
 
 	private static Font my_font;
 
-	public static void show(String mesaj, String baslik, int message_type)
+	public static void show(String message, String title, int message_type)
 	{
 		my_font = Font.font("Arial", 20);
 		stage = new Stage();
-		stage.setTitle(baslik);
+		stage.setTitle(title);
 		stage.setResizable(false);
 		text = new Text();
-		text.setText(mesaj);
+		text.setText(message);
 		text.setWrappingWidth(500);
 		text.setTextOrigin(VPos.CENTER);
 		text.setTextAlignment(TextAlignment.CENTER);
 		text.setFont(my_font);
 		text.setTranslateY(10);
+		button = new Button();
 		button.setText("OK");
 		button.prefWidth(100);
 		button.prefHeight(25);
