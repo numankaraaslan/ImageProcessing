@@ -1051,8 +1051,8 @@ public class ImageProcessing extends Application
 			@Override
 			public void handle(WindowEvent event)
 			{
-				video_capturer.release();
 				timer.cancel();
+				video_capturer.release();
 				btn_capture_image.setDisable(true);
 			}
 		};
