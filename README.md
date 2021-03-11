@@ -3,6 +3,10 @@
 Watch how to use it:
 https://www.youtube.com/watch?v=BEK44YVlleo
 
-You need opencv and environment variable settings adn JDK8 in your computer.
+Read what it is:
 
-So clone it and understand it yourself ;)
+http://www.numankaraaslan.com/entry?ent=29&lang=en
+
+OR
+
+http://www.numankaraaslan.com/entry?ent=29&lang=tr
